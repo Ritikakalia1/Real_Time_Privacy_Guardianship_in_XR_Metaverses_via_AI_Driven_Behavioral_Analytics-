@@ -208,20 +208,4 @@ no separate threat dataset is required.
 - Federated learning for cross-platform generalization.
 - Transformer-based temporal models for longer-range dependencies.
 
-## Citation
 
-The full manuscript is not yet published. If you'd like to reference this
-work in the meantime, please cite the conference presentation:
-
-> *Real-Time Privacy Guardianship in XR Metaverses via AI-Driven Behavioral
-> Analytics* (2026) [Conference e-poster presentation]. IEEE 5th
-> International Conference on Intelligent Reality (ICIR 2026), University of
-> Pisa, Italy.
-
-A formal citation (with author list, DOI, and proceedings details) will be
-added here once the paper is published.
-
-## Acknowledgment
-
-Supported by the National Science and Technology Council (NSTC), Taiwan,
-Grants NSTC112-2221-E-468-008-MY3 and NSTC114-2221-E-468-015.
