@@ -18,7 +18,7 @@ Everyday Activities), then validated with rigorous **Leave-One-Subject-Out
 > achieving 92% accuracy and 0.976 AUC on 993,636 frames.
 >
 > *The full manuscript is currently unpublished / in preparation and is not
-> included in this repository. The e-poster is available under `paper/`.*
+> included in this repository. The e-poster is available. 
 
 ---
 
