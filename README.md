@@ -17,8 +17,8 @@ Everyday Activities), then validated with rigorous **Leave-One-Subject-Out
 > impersonation, spatial profiling) using 19 engineered motion features,
 > achieving 92% accuracy and 0.976 AUC on 993,636 frames.
 >
-> *The full manuscript is currently unpublished / in preparation and is not
-> included in this repository. The e-poster (`BehaviorShield_ePoster.pptx`)
+
+> The e-poster (`BehaviorShield_ePoster.pptx`)
 > is available in this repo.*
 
 ---
