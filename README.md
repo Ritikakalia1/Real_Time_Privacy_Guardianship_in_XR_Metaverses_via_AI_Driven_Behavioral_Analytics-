@@ -137,8 +137,6 @@ confirms rolling temporal statistics are essential — AUC rises from 0.70
 ├── main.py                      # end-to-end training + evaluation script
 ├── requirement.txt              # Python dependencies
 ├── BehaviorShield_ePoster.pptx  # ICIR 2026 e-poster; full manuscript unpublished
-├── checks.ipynb                 # exploratory / sanity-check notebook
-├── main_outputs.txt             # captured console output from a pipeline run
 └── outputs/                     # generated figures (ROC, SHAP, ablation, ...)
 ```
 
