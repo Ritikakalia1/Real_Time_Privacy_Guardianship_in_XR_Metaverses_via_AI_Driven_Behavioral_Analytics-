@@ -1,166 +1,224 @@
-# Real-Time Privacy Guardianship in XR Metaverses via AI-Driven Behavioral Analytics
-
-## Overview
-
-BehaviorShield is an AI-driven behavioral analytics framework for detecting privacy threats in Extended Reality (XR) and Metaverse environments. Instead of relying on traditional authentication or network-level monitoring, the system analyzes user behavioral patterns extracted from XR motion data to identify malicious activities such as:
-
-- Avatar Tracking
-- User Impersonation
-- Spatial Profiling
-- Behavioral Privacy Attacks
-
-The project employs machine learning models with temporal feature engineering to perform real-time behavioral anomaly detection while satisfying latency requirements for immersive XR applications.
-
----
-
-## Features
-
-- Real-world XR behavioral data analysis
-- Temporal feature engineering using rolling-window statistics
-- Multiple machine learning models for comparison
-- Explainable AI using feature importance analysis
-- Cross-session Leave-One-Session-Out (LOSO) evaluation
-- Real-time deployment analysis
-- Privacy-preserving behavioral threat detection
-
----
-
-## Problem Statement
-
-Current metaverse platforms collect rich behavioral information such as:
-
-- Head movements
-- Hand trajectories
-- Walking patterns
-- Spatial navigation
-- Interaction behavior
-
-These behavioral signals can unintentionally reveal sensitive personal information and enable privacy attacks.
-
-BehaviorShield detects these threats using AI-driven behavioral analytics before they compromise user privacy.
-
----
-
-## Dataset
-
-This work utilizes publicly available XR behavioral datasets combined with temporal feature engineering to simulate realistic privacy threat scenarios.
-
-Behavioral signals include:
-
-- Head pose
-- Hand movement
-- Position coordinates
-- Motion statistics
-- Velocity
-- Acceleration
-- Interaction features
-
-Rolling 3-second temporal windows are used to capture sequential behavioral dynamics.
-
----
-
-## Machine Learning Pipeline
-
-```
-XR Motion Data
-        │
-        ▼
-Data Cleaning
-        │
-        ▼
-Feature Engineering
-        │
-        ▼
-Rolling Window Statistics
-        │
-        ▼
-Threat Label Generation
-        │
-        ▼
-Model Training
-        │
-        ▼
-Performance Evaluation
-        │
-        ▼
-Real-Time Deployment Analysis
-```
-
----
-
-## Models Evaluated
-
-- Random Forest
-- LightGBM
-
-Evaluation metrics include:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- ROC-AUC
-- Inference Latency
-
----
-
-## Key Results
-
-- Temporal feature engineering improved ROC-AUC from approximately **0.70 to 0.97**.
-- Rolling-window behavioral statistics significantly improved detection performance.
-- **LightGBM** achieved the best latency-performance trade-off for real-time XR deployment.
-- **Random Forest** provided higher interpretability through feature importance analysis but exhibited higher inference latency. :contentReference[oaicite:0]{index=0}
-
----
-
-## Repository Structure
-
-```
-.
-├── metaverse-final.ipynb
-├── BehaviorShield_ePoster.pptx
-├── Real_Time_Privacy_Guardianship_in_XR_Metaverses_via_AI_Driven_Behavioral_Analytics.pdf
-└── README.md
-```
-
----
-
-## Technologies Used
-
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- LightGBM
-- Matplotlib
-- Jupyter Notebook
-
----
-
-## Future Work
-
-- Real-time deployment in live XR systems
-- Federated learning for cross-platform privacy protection
-- Transformer-based temporal models
-- Collection of real adversarial behavioral datasets
-- Multi-user behavioral threat detection :contentReference[oaicite:1]{index=1}
-
----
-
-## Research Contribution
-
-This work demonstrates that temporal behavioral dynamics alone can effectively distinguish privacy threats in immersive virtual environments without relying on traditional identity-based authentication mechanisms. The proposed framework provides an efficient balance between detection performance, interpretability, and real-time deployment feasibility. :contentReference[oaicite:2]{index=2}
-
----
-
-## Citation
-
-If you use this work in your research, please cite:
+# BehaviorShield
 
 **Real-Time Privacy Guardianship in XR Metaverses via AI-Driven Behavioral Analytics**
 
+BehaviorShield is a behavioral-analytics pipeline that detects privacy-invasive
+behavior in VR/XR sessions directly from head-pose motion — without relying on
+encryption-breakable identifiers or synthetic-only training data. It is trained
+and evaluated on **real VR motion capture** (WhoIsAlyx) and cross-domain
+augmented with **real-world egocentric head trajectories** (Project Aria
+Everyday Activities), then validated with rigorous **Leave-One-Subject-Out
+(LOSO)** cross-validation and explained with **SHAP**.
+
+> **Conference Presentation (e-Poster):** *Real-Time Privacy Guardianship in
+> XR Metaverses via AI-Driven Behavioral Analytics.* Presented at the **IEEE
+> 5th International Conference on Intelligent Reality (ICIR 2026)**,
+> University of Pisa, Italy (June 2026). Detects 3 VR attack types (tracking,
+> impersonation, spatial profiling) using 19 engineered motion features,
+> achieving 92% accuracy and 0.976 AUC on 993,636 frames.
+>
+> *The full manuscript is currently unpublished / in preparation and is not
+> included in this repository. The e-poster is available under `paper/`.*
+
 ---
 
-## License
+## The problem
 
-This project is intended for academic and research purposes.
+Embodied avatars turn continuous motion into a new attack surface. Encryption
+and access control can't stop an adversary from *inferring* things purely from
+observable kinematics. BehaviorShield targets three concrete threat classes:
+
+| Threat | Attacker behavior | Objective |
+|---|---|---|
+| **Avatar Tracking** | Blends own position toward a lagged copy of the target's trajectory, with burst pursuit intervals | Infer real-world location/routine |
+| **Behavioral Impersonation** | Interpolates head rotation toward a victim's signature, fidelity degrading over time | Deceive social/security systems that trust motion signatures |
+| **Spatial Profiling** | Systematic grid traversal with dwell pauses and backtracking | Build a behavioral dossier of avatar habits |
+
+## Results at a glance
+
+| Metric | Value |
+|---|---|
+| Best-fold ROC-AUC (LOSO) | **0.976** |
+| Player-level LOSO (9 folds) | AUC 0.967 ± 0.009, F1 0.885 ± 0.017 |
+| Date-level LOSO (4 folds) | AUC 0.963 ± 0.007, F1 0.836 ± 0.042 |
+| Threat recall / precision | 91.1% / 88.6% |
+| Accuracy / F1 | 92.0% / 89.9% |
+| False positive rate | 7.5% |
+| LightGBM inference latency | 0.85 ms (P99 = 1.2 ms) — fits a 90 fps VR frame budget |
+| Annotated frames | 993,636 (60% benign / 40% threat) |
+
+Full per-fold tables, ablations, and baseline comparisons are summarized in
+the e-poster (`paper/`) and reproduced by the pipeline's output figures.
+
+## How it works
+
+```
+WhoIsAlyx (HuggingFace)          Project Aria AEA
+9 players, 596k frames    143 sequences, 1.8M frames
+HTC Vive @ 90fps           6-DoF SLAM head pose
+        │                            │
+        └───────────► Feature Extraction ◄───────────┘
+   motion_speed · head_rotation_rate · pose_variance
+   spatial_proximity · interaction_freq · movement_entropy
+   + 12 rolling 3s mean/std statistics  (19 features)
+                        │
+        ┌───────────────┴───────────────┐
+    Benign pool                     Threat pool
+  (596k XR + 119k AEA)      (Tracking / Impersonation / Profiling,
+                              ~40% of final dataset)
+                        │
+        Correlation filter (ρ < 0.9) → SMOTE (k=5) → Random Forest
+                        │
+   Player-level LOSO (9 folds) · Date-level LOSO (4 folds)
+   GridSearchCV hyperparameter tuning on the best fold
+                        │
+        Threshold selection · SHAP explainability
+        Baseline comparison · Ablation study
+        Adaptive-adversary (mimicry) evasion test
+```
+
+### Feature engineering
+
+| Feature | Description | Window |
+|---|---|---|
+| `motion_speed` | Normalized Euclidean displacement per frame | frame |
+| `head_rotation_rate` | Angular velocity from quaternion change | frame |
+| `pose_variance` | Std. dev. of position magnitude | 30 frames |
+| `spatial_proximity` | Inverse distance from session centroid | frame |
+| `interaction_freq` | Zero-crossing rate of motion speed | 90 frames |
+| `movement_entropy` | Spatial entropy over a discretized grid | 270 frames |
+| `time_since_last` | Inter-frame timing | frame |
+
+Each of the 6 base features also gets a rolling 3-second mean and standard
+deviation, for 19 total features (18 after correlation filtering at ρ > 0.9).
+
+### Evaluation protocol
+
+- **Player-level LOSO**: each of the 9 real sessions is held out in turn.
+- **Date-level LOSO**: all players recorded on a given date are held out
+  together (4 folds) — a stricter test for recording-session confounds.
+- Threat frames are split by `primary_sid` (the session an attack was
+  *generated from*), not just `session_id`, so no threat sample derived from
+  a held-out session leaks into training.
+- Cross-domain AEA frames are injected only into training folds, capped at
+  20% of the benign count, as out-of-distribution augmentation — a KS-test
+  confirms AEA is domain-distinct from VR motion (p < 0.001), which is the
+  expected and desired outcome, not a validation failure.
+
+### Model comparison
+
+| Model | AUC | F1 | Recall | Latency (ms) |
+|---|---|---|---|---|
+| Random Forest ★ (interpretable, SHAP) | 0.976 | 0.899 | 0.911 | 61.1 |
+| **LightGBM** (deployed) | 0.982 | 0.909 | 0.941 | **0.85** |
+| XGBoost | 0.982 | 0.897 | 0.964 | 0.67 |
+| MLP | 0.947 | 0.848 | 0.907 | 0.27 |
+
+Random Forest is used for training/explainability; LightGBM is recommended
+for real-time deployment since Random Forest's latency exceeds the ~10 ms
+budget for 90 fps VR.
+
+### Explainability (SHAP)
+
+`movement_entropy_std3s` (the rolling 3-second standard deviation of spatial
+entropy) is the top feature across **all three threat types**, and the top-3
+rolling features account for 58.7% of total mean |SHAP|. An ablation study
+confirms rolling temporal statistics are essential — AUC rises from 0.70
+(instantaneous features only) to 0.98 once they're added.
+
+---
+
+## Repository structure
+
+```
+.
+├── behaviorshield_pipeline.py   # end-to-end training + evaluation script
+├── requirements.txt
+├── paper/                       # ICIR 2026 e-poster (PDF); full manuscript unpublished
+├── outputs/                     # generated figures (ROC, SHAP, ablation, ...)
+└── README.md
+```
+
+## Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+Requires a HuggingFace account/token for the WhoIsAlyx dataset:
+
+```bash
+huggingface-cli login
+# or: export HF_TOKEN=your_token_here
+```
+
+Project Aria AEA sequences are expected under `AEA_ROOT` (see below), each
+containing `mps/slam/closed_loop_trajectory.csv`. Download instructions are
+in the [AEA dataset repo](https://github.com/facebookresearch/Aria-Everyday-Activities-Dataset).
+
+## Usage
+
+```bash
+export OUTPUT_DIR=./outputs
+export AEA_ROOT=./data/aea_data
+python behaviorshield_pipeline.py
+```
+
+This will:
+1. Load WhoIsAlyx sessions and AEA sequences.
+2. Build the labeled benign/threat dataset with rolling features.
+3. Run player-level and date-level LOSO cross-validation.
+4. Tune a Random Forest via grid search on the best fold.
+5. Produce evaluation figures (ROC curve, correlation matrix, SHAP summary,
+   baseline comparison, ablation study, evasion-robustness curve) in
+   `OUTPUT_DIR`.
+
+If no AEA data is available locally, the pipeline still runs — AEA
+augmentation and cross-domain validation are automatically skipped.
+
+## Datasets
+
+| Dataset | Role | Source |
+|---|---|---|
+| **WhoIsAlyx** | Real VR benign motion (9 players, 4 sessions, 596,182 frames @ 90 fps, HTC Vive) | [HuggingFace: cschell/xr-motion-dataset-catalogue](https://huggingface.co/datasets/cschell/xr-motion-dataset-catalogue) |
+| **Project Aria Everyday Activities (AEA)** | Real-world out-of-domain benign augmentation (143 sequences, 6-DoF SLAM head pose) | [Aria Everyday Activities](https://arxiv.org/abs/2402.13349) |
+
+Threat data (Tracking, Impersonation, Profiling) is synthetically generated
+from the real WhoIsAlyx sessions using the attacker models described above —
+no separate threat dataset is required.
+
+## Limitations
+
+- **Session confound**: date-level LOSO F1 drops for the cohort where all
+  four same-date players are withheld simultaneously, indicating some
+  reliance on session-specific patterns.
+- **Mild overfitting**: train AUC ≈ 1.0 vs. test AUC ≈ 0.976 on Random Forest.
+- **Simulated threats**: attack patterns are algorithmically generated and
+  may not fully capture real adversarial behavior.
+- **Deployment**: Random Forest inference latency (~61 ms) exceeds the VR
+  frame budget; use LightGBM for real-time deployment.
+
+## Future work
+
+- Red-team adversarial data collection (real attackers, not simulated).
+- Live deployment with streaming inference.
+- Federated learning for cross-platform generalization.
+- Transformer-based temporal models for longer-range dependencies.
+
+## Citation
+
+The full manuscript is not yet published. If you'd like to reference this
+work in the meantime, please cite the conference presentation:
+
+> *Real-Time Privacy Guardianship in XR Metaverses via AI-Driven Behavioral
+> Analytics* (2026) [Conference e-poster presentation]. IEEE 5th
+> International Conference on Intelligent Reality (ICIR 2026), University of
+> Pisa, Italy.
+
+A formal citation (with author list, DOI, and proceedings details) will be
+added here once the paper is published.
+
+## Acknowledgment
+
+Supported by the National Science and Technology Council (NSTC), Taiwan,
+Grants NSTC112-2221-E-468-008-MY3 and NSTC114-2221-E-468-015.
