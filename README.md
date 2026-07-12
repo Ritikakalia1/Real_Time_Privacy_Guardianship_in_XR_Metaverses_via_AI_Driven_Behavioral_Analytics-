@@ -18,7 +18,8 @@ Everyday Activities), then validated with rigorous **Leave-One-Subject-Out
 > achieving 92% accuracy and 0.976 AUC on 993,636 frames.
 >
 > *The full manuscript is currently unpublished / in preparation and is not
-> included in this repository. The e-poster is available. 
+> included in this repository. The e-poster (`BehaviorShield_ePoster.pptx`)
+> is available in this repo.*
 
 ---
 
@@ -48,7 +49,8 @@ observable kinematics. BehaviorShield targets three concrete threat classes:
 | Annotated frames | 993,636 (60% benign / 40% threat) |
 
 Full per-fold tables, ablations, and baseline comparisons are summarized in
-the e-poster (`paper/`) and reproduced by the pipeline's output figures.
+the e-poster (`BehaviorShield_ePoster.pptx`) and reproduced by the
+pipeline's output figures.
 
 ## How it works
 
@@ -132,17 +134,18 @@ confirms rolling temporal statistics are essential — AUC rises from 0.70
 
 ```
 .
-├── behaviorshield_pipeline.py   # end-to-end training + evaluation script
-├── requirements.txt
-├── paper/                       # ICIR 2026 e-poster (PDF); full manuscript unpublished
-├── outputs/                     # generated figures (ROC, SHAP, ablation, ...)
-└── README.md
+├── main.py                      # end-to-end training + evaluation script
+├── requirement.txt              # Python dependencies
+├── BehaviorShield_ePoster.pptx  # ICIR 2026 e-poster; full manuscript unpublished
+├── checks.ipynb                 # exploratory / sanity-check notebook
+├── main_outputs.txt             # captured console output from a pipeline run
+└── outputs/                     # generated figures (ROC, SHAP, ablation, ...)
 ```
 
 ## Setup
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
 
 Requires a HuggingFace account/token for the WhoIsAlyx dataset:
@@ -161,7 +164,7 @@ in the [AEA dataset repo](https://github.com/facebookresearch/Aria-Everyday-Acti
 ```bash
 export OUTPUT_DIR=./outputs
 export AEA_ROOT=./data/aea_data
-python behaviorshield_pipeline.py
+python main.py
 ```
 
 This will:
